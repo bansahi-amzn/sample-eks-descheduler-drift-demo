@@ -6,9 +6,10 @@ Companion repository for the AWS Containers blog post
 Reproduces the full experiment: a three-Deployment web fleet (1,000 pods
 combined) driven by HPAs under randomized load, each Deployment carrying its
 own soft topology spread constraint; a node-availability gap in one AZ
-(induced by cordon — `scripts/induce-window.sh` — with an AWS FIS template as
-the realistic-interruption variant; see `fis/README-fis.md` for why cordon is
-the more controllable instrument against a managed node group); a control
+(induced by draining the zone's nodes — `scripts/induce-window.sh` — with an AWS
+FIS template as the realistic-interruption variant; see `fis/README-fis.md` for
+why a controlled drain is the more predictable instrument against a managed node
+group); a control
 experiment proving running pods do not relocate when capacity returns; and the
 descheduler restoring each workload's configured `maxSkew`.
 
@@ -85,7 +86,7 @@ descheduler/    Helm values: CronJob mode for the demo (fast convergence, scoped
                 to `demo` ns) and a Deployment-mode variant for live metrics
 production/     pilot + production DeschedulerPolicy files and PDB templates
 fis/            AWS FIS experiment templates for the AZ unavailability window
-scripts/        induce-window.sh (cordon window), watch-distribution.sh
+scripts/        induce-window.sh (drain/restore an AZ), watch-distribution.sh
                 (30s per-AZ + per-deployment skew CSV), snapshot.sh (phase
                 captures), export-prom.sh (chart data as CSV), mark.sh
                 (timestamped run timeline)
@@ -169,6 +170,27 @@ kubectl apply -f "$RAW/workload/hpa-1000.yaml"   # or hpa-100.yaml for small-sca
 kubectl apply -f "$RAW/workload/load-generator.yaml"
 ```
 
+Drive the fleet up to scale. The load generator ships at 20 replicas, which is
+sized for the full-scale (1,000-pod) run. Scale it and the HPAs climb toward
+their ceilings within a few minutes:
+
+```bash
+kubectl -n demo scale deploy/load-generator --replicas=45   # full-scale run
+```
+
+On the **small-scale** (100-pod) run, 20 generators saturate every HPA
+permanently and the churn baseline flatlines — scale *down* instead:
+
+```bash
+kubectl -n demo scale deploy/load-generator --replicas=4    # small-scale run only
+```
+
+Leave the traffic randomized (the file's defaults). The random burst/idle
+pattern is what keeps the HPAs cycling up and down, and that churn is what
+produces drift once a zone goes away — a fleet pinned flat never drifts. Only
+pin the load flat (`IDLE_MIN=0 IDLE_MAX=0`, see `workload/load-generator.yaml`)
+if you specifically want steady numbers for a still screenshot.
+
 Confirm the fleet is up and evenly spread before inducing drift:
 
 ```bash
@@ -186,9 +208,13 @@ of every before/after number:
 
 ### Step 4 — Induce the AZ-unavailability window
 
-Use **your** third AZ name. `induce-window.sh open` cordons the nodes and evicts
-their pods in one action, honouring PDBs — closer to real instance loss than
-deleting pods by hand.
+Use **your** third AZ name. `induce-window.sh open` **drains** the nodes — it
+cordons them *and* evicts their running pods in one action, honouring PDBs. A
+bare cordon only blocks new pods and leaves the running ones in place, so the
+zone never empties; draining is what forces the pods to reschedule onto the
+surviving AZs, which is closer to real instance loss than deleting pods by hand.
+At full scale this evicts a large number of pods and proceeds in PDB-throttled
+waves, so give it a minute or two to finish.
 
 ```bash
 ./scripts/induce-window.sh open us-east-1c

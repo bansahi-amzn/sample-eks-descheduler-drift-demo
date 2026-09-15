@@ -89,8 +89,8 @@ data:
             "uid": "${datasource}"
           },
           "gridPos": {
-            "h": 9,
-            "w": 16,
+            "h": 10,
+            "w": 10,
             "x": 0,
             "y": 0
           },
@@ -110,7 +110,7 @@ data:
           "options": {
             "legend": {
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "calcs": [
                 "last",
                 "max",
@@ -143,10 +143,10 @@ data:
             "uid": "${datasource}"
           },
           "gridPos": {
-            "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 0
+            "h": 8,
+            "w": 6,
+            "x": 18,
+            "y": 10
           },
           "fieldConfig": {
             "defaults": {
@@ -201,9 +201,9 @@ data:
           },
           "gridPos": {
             "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 9
+            "w": 6,
+            "x": 6,
+            "y": 10
           },
           "fieldConfig": {
             "defaults": {
@@ -226,7 +226,7 @@ data:
           "options": {
             "legend": {
               "displayMode": "table",
-              "placement": "right",
+              "placement": "bottom",
               "calcs": [
                 "last"
               ]
@@ -259,9 +259,9 @@ data:
           },
           "gridPos": {
             "h": 8,
-            "w": 12,
+            "w": 6,
             "x": 12,
-            "y": 9
+            "y": 10
           },
           "fieldConfig": {
             "defaults": {
@@ -370,7 +370,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 17
+            "y": 18
           },
           "fieldConfig": {
             "defaults": {
@@ -460,7 +460,7 @@ data:
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 17
+            "y": 18
           },
           "fieldConfig": {
             "defaults": {
@@ -522,7 +522,7 @@ data:
             "h": 8,
             "w": 6,
             "x": 18,
-            "y": 17
+            "y": 18
           },
           "fieldConfig": {
             "defaults": {
@@ -586,10 +586,10 @@ data:
             "uid": "${datasource}"
           },
           "gridPos": {
-            "h": 7,
+            "h": 6,
             "w": 6,
-            "x": 0,
-            "y": 25
+            "x": 8,
+            "y": 26
           },
           "fieldConfig": {
             "defaults": {
@@ -634,10 +634,10 @@ data:
             "uid": "${datasource}"
           },
           "gridPos": {
-            "h": 7,
+            "h": 6,
             "w": 10,
-            "x": 6,
-            "y": 25
+            "x": 14,
+            "y": 26
           },
           "fieldConfig": {
             "defaults": {
@@ -680,10 +680,10 @@ data:
             "uid": "${datasource}"
           },
           "gridPos": {
-            "h": 7,
+            "h": 6,
             "w": 8,
-            "x": 16,
-            "y": 25
+            "x": 0,
+            "y": 26
           },
           "fieldConfig": {
             "defaults": {
@@ -725,8 +725,8 @@ data:
           "gridPos": {
             "h": 10,
             "w": 14,
-            "x": 0,
-            "y": 32
+            "x": 10,
+            "y": 0
           },
           "datasource": {
             "type": "prometheus",
@@ -883,10 +883,10 @@ data:
           "title": "Per-workload skew vs configured maxSkew",
           "description": "The apples-to-apples comparison: each Deployment's observed skew against the maxSkew: 1 its own spec asks for. A workload above the dashed line is genuinely violating its constraint. Use this rather than fleet skew to claim convergence.",
           "gridPos": {
-            "h": 10,
-            "w": 10,
-            "x": 14,
-            "y": 32
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 10
           },
           "datasource": {
             "type": "prometheus",
